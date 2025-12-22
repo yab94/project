@@ -6,9 +6,9 @@ namespace App\Banking\Domain\Repository;
 
 use App\Banking\Domain\AggregateRoot\BankAccount;
 use App\Banking\Domain\ValueObject\BankAccountId;
-use App\Core\Domain\Repository;
+use App\Core\Domain\RepositoryInterface;
 
-interface BankAccountRepositoryInterface extends Repository
+interface BankAccountRepositoryInterface extends RepositoryInterface
 {
     public function save(BankAccount $account): void;
     

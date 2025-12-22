@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Infrastructure\Console\CLI\Attribute;
+namespace App\Core\Infrastructure\Console\Attribute;
 
 use Attribute;
 

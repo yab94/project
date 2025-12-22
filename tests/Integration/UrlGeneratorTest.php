@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Integration;
 
 use PHPUnit\Framework\TestCase;
-use App\Core\Infrastructure\Web\Routing\Router;
-use App\Core\Infrastructure\Web\Routing\UrlGenerator;
+use App\Core\Infrastructure\Web\Router;
+use App\Core\Infrastructure\Web\UrlGenerator;
 
 class UrlGeneratorTest extends TestCase
 {

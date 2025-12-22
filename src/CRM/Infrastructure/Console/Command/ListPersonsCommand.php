@@ -7,7 +7,7 @@ namespace App\CRM\Infrastructure\Console\Command;
 use App\Core\Infrastructure\CLI\CLI;
 use App\CRM\Infrastructure\Persistence\PDOPersonRepository;
 use App\Core\Infrastructure\Console\Command\AbstractCommand;
-use App\Core\Infrastructure\Console\CLI\Attribute\Command;
+use App\Core\Infrastructure\Console\Attribute\Command;
 
 #[Command(
     name: 'crm:list-persons',

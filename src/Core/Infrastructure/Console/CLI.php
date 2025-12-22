@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Infrastructure\Console\CLI;
+namespace App\Core\Infrastructure\Console;
 
-use App\Core\Domain\Module;
-use App\Core\Infrastructure\Console\CLI\Attribute\Command;
+use App\Core\Domain\AbstractModule;
+use App\Core\Infrastructure\Console\Attribute\Command;
 use App\Core\Infrastructure\Console\Command\AbstractCommand;
 use ReflectionClass;
 use RuntimeException;
@@ -16,6 +16,7 @@ final class CLI
     private array $commands = [];
 
     public function __construct(
+        private readonly array $server = [],
         private readonly array $argv = []
     ) {
     }
@@ -25,10 +26,15 @@ final class CLI
         return $index === null ? $this->argv : ($this->argv[$index] ?? null);
     }
 
+    public function server(?string $key = null, mixed $default = null): mixed
+    {
+        return $key === null ? $this->server : ($this->server[$key] ?? $default);
+    }
+
     /**
      * Register a module and its commands
      */
-    public function registerModule(Module $module): self
+    public function registerModule(AbstractModule $module): self
     {
         foreach ($module->getCommands() as $commandClass) {
             $this->registerCommand($commandClass);

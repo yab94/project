@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Infrastructure\Web\Routing\Attribute;
+namespace App\Core\Infrastructure\Web\Attribute;
 
 use Attribute;
 
 #[Attribute(Attribute::TARGET_METHOD)]
-class Post extends Route
+class Get extends Route
 {
     public function __construct(string $path, ?string $name = null)
     {
-        parent::__construct($path, 'POST', $name);
+        parent::__construct($path, 'GET', $name);
     }
 }

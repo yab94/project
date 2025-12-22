@@ -7,9 +7,9 @@ namespace App\Billing\Domain\Repository;
 use App\Billing\Domain\AggregateRoot\Quote;
 use App\Billing\Domain\ValueObject\QuoteId;
 use App\CRM\Domain\ValueObject\PersonId;
-use App\Core\Domain\Repository;
+use App\Core\Domain\RepositoryInterface;
 
-interface QuoteRepositoryInterface extends Repository
+interface QuoteRepositoryInterface extends RepositoryInterface
 {
     public function save(Quote $quote): void;
     

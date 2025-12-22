@@ -48,10 +48,17 @@
         .badge-issued { background: #f39c12; color: white; }
         .badge-paid { background: #27ae60; color: white; }
         .badge-cancelled { background: #e74c3c; color: white; }
+        .badge-success { background: #27ae60; color: white; }
+        .badge-danger { background: #e74c3c; color: white; }
+        .badge-warning { background: #f39c12; color: white; }
         .card { background: #f8f9fa; padding: 1.5rem; border-radius: 4px; margin-bottom: 1rem; }
         .card-header { font-weight: 600; color: #2c3e50; margin-bottom: 1rem; font-size: 1.1rem; }
         .actions { margin-top: 1.5rem; }
         .actions .btn { margin-right: 0.5rem; margin-bottom: 0.5rem; }
+        .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .header-actions h2 { margin: 0; border: none; padding: 0; }
+        .form-actions { margin-top: 2rem; display: flex; gap: 1rem; }
+        .btn-primary { background: #3498db; }
     </style>
 </head>
 <body>
@@ -63,7 +70,7 @@
                 <a href="<?= $url->route('persons.index') ?>">Persons</a>
                 <a href="<?= $url->route('quotes.index') ?>">Quotes</a>
                 <a href="<?= $url->route('invoices.index') ?>">Invoices</a>
-                <a href="/bank-accounts">Bank Accounts</a>
+                <a href="<?= $url->route('bank_accounts.index') ?>">Bank Accounts</a>
             </nav>
         </div>
     </header>

@@ -6,9 +6,9 @@ namespace App\CRM\Domain\Repository;
 
 use App\CRM\Domain\AggregateRoot\Person;
 use App\CRM\Domain\ValueObject\PersonId;
-use App\Core\Domain\Repository;
+use App\Core\Domain\RepositoryInterface;
 
-interface PersonRepositoryInterface extends Repository
+interface PersonRepositoryInterface extends RepositoryInterface
 {
     public function save(Person $person): void;
     

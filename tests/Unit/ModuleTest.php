@@ -58,7 +58,8 @@ class ModuleTest extends TestCase
         $controllers = $module->getControllers();
 
         $this->assertIsArray($controllers);
-        $this->assertEmpty($controllers);
+        $this->assertNotEmpty($controllers);
+        $this->assertContains(\App\Banking\Infrastructure\Web\Controller\BankAccountController::class, $controllers);
     }
 
     public function testModuleBootCanBeCalled(): void

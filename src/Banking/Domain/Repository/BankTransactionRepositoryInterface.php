@@ -8,9 +8,9 @@ use App\Banking\Domain\Entity\BankTransaction;
 use App\Banking\Domain\ValueObject\BankAccountId;
 use App\Banking\Domain\ValueObject\BankTransactionId;
 use App\Billing\Domain\ValueObject\InvoiceId;
-use App\Core\Domain\Repository;
+use App\Core\Domain\RepositoryInterface;
 
-interface BankTransactionRepositoryInterface extends Repository
+interface BankTransactionRepositoryInterface extends RepositoryInterface
 {
     public function save(BankTransaction $transaction): void;
     

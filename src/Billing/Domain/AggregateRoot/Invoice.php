@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Billing\Domain\AggregateRoot;
 
-use App\Core\Domain\AggregateRoot;
+use App\Core\Domain\AggregateRootInterface;
 use App\Billing\Domain\ValueObject\Amount;
 use App\Billing\Domain\ValueObject\InvoiceId;
 use App\Billing\Domain\ValueObject\InvoiceStatus;
@@ -28,7 +28,7 @@ use App\CRM\Domain\ValueObject\PersonId;
  * All modifications to invoice lines must go through Invoice to maintain
  * aggregate consistency and enforce workflow rules.
  */
-final class Invoice implements AggregateRoot
+final class Invoice implements AggregateRootInterface
 {
     private InvoiceId $id;
     private PersonId $clientId;

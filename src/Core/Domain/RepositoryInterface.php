@@ -18,7 +18,7 @@ namespace App\Core\Domain;
  * 
  * Example:
  * ```php
- * interface PersonRepositoryInterface extends Repository
+ * interface PersonRepositoryInterface extends RepositoryInterface
  * {
  *     public function save(Person $person): void;
  *     public function findById(PersonId $id): ?Person;
@@ -27,7 +27,7 @@ namespace App\Core\Domain;
  * }
  * ```
  */
-interface Repository
+interface RepositoryInterface
 {
     // Marker interface - concrete repositories define their own type-specific methods
     // This allows for proper type safety while maintaining a common contract

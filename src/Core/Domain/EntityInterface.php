@@ -28,7 +28,7 @@ namespace App\Core\Domain;
  * Note: Aggregate Roots are special entities that serve as entry points
  * to an aggregate and enforce consistency boundaries.
  */
-interface Entity
+interface EntityInterface
 {
     /**
      * Get the unique identifier of this entity.

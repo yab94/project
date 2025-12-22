@@ -7,9 +7,9 @@ namespace App\CRM\Domain\ValueObject;
 use App\CRM\Domain\ValueObject\ContactId;
 use App\CRM\Domain\ValueObject\Email;
 use App\CRM\Domain\ValueObject\Phone;
-use App\Core\Domain\ValueObject;
+use App\Core\Domain\ValueObjectInterface;
 
-final class Contact implements ValueObject
+final class Contact implements ValueObjectInterface
 {
     private ContactId $id;
     private ?Email $email;
@@ -96,7 +96,7 @@ final class Contact implements ValueObject
         $this->type = $type;
     }
 
-    public function equals(ValueObject $other): bool
+    public function equals(ValueObjectInterface $other): bool
     {
         if (!$other instanceof self) {
             return false;

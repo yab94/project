@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\CRM\Domain\ValueObject;
 
 use App\CRM\Domain\ValueObject\AddressId;
-use App\Core\Domain\ValueObject;
+use App\Core\Domain\ValueObjectInterface;
 
-final class Address implements ValueObject
+final class Address implements ValueObjectInterface
 {
     private AddressId $id;
     private string $street;
@@ -101,7 +101,7 @@ final class Address implements ValueObject
         $this->city = $city;
     }
 
-    public function equals(ValueObject $other): bool
+    public function equals(ValueObjectInterface $other): bool
     {
         return $other instanceof self
             && $this->id->equals($other->id)

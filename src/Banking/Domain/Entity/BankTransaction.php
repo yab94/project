@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Banking\Domain\Entity;
 
-use App\Core\Domain\Entity;
+use App\Core\Domain\EntityInterface;
 use App\Banking\Domain\ValueObject\BankAccountId;
 use App\Banking\Domain\ValueObject\BankTransactionId;
 use App\Banking\Domain\ValueObject\TransactionType;
 use App\Billing\Domain\ValueObject\Amount;
 use App\Billing\Domain\ValueObject\InvoiceId;
 
-final class BankTransaction implements Entity
+final class BankTransaction implements EntityInterface
 {
     private BankTransactionId $id;
     private BankAccountId $bankAccountId;

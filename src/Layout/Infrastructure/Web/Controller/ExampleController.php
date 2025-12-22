@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Infrastructure\Web\Controller;
+namespace App\Layout\Infrastructure\Web\Controller;
 
-use App\Core\Infrastructure\Web\Routing\Attribute\Get;
+use App\Core\Infrastructure\Web\Attribute\Get;
+use App\Core\Infrastructure\Web\Controller\AbstractController;
 
 /**
  * Example controller WITHOUT explicit route names

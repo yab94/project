@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\CRM\Domain\ValueObject;
 
-use App\Core\Domain\ValueObject;
+use App\Core\Domain\ValueObjectInterface;
 
-enum PersonType: string implements ValueObject
+enum PersonType: string implements ValueObjectInterface
 {
     case INDIVIDUAL = 'individual';
     case COMPANY = 'company';
 
-    public function equals(ValueObject $other): bool
+    public function equals(ValueObjectInterface $other): bool
     {
         return $other instanceof self && $this === $other;
     }

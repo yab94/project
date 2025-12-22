@@ -7,9 +7,9 @@ namespace App\Billing\Domain\Repository;
 use App\Billing\Domain\AggregateRoot\Invoice;
 use App\Billing\Domain\ValueObject\InvoiceId;
 use App\CRM\Domain\ValueObject\PersonId;
-use App\Core\Domain\Repository;
+use App\Core\Domain\RepositoryInterface;
 
-interface InvoiceRepositoryInterface extends Repository
+interface InvoiceRepositoryInterface extends RepositoryInterface
 {
     public function save(Invoice $invoice): void;
     

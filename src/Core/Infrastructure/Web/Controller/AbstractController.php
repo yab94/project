@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core\Infrastructure\Web\Controller;
 
-use App\Core\Infrastructure\Web\Routing\Router;
-use App\Core\Infrastructure\Web\Routing\UrlGenerator;
+use App\Core\Infrastructure\Web\Router;
+use App\Core\Infrastructure\Web\UrlGenerator;
 
 abstract class AbstractController
 {
@@ -93,5 +93,26 @@ abstract class AbstractController
     protected function server(?string $key = null, mixed $default = null): mixed
     {
         return $this->router->server($key, $default);
+    }
+
+    /**
+     * Generate URL from route name
+     */
+    protected function url(string $name, array $params = []): string
+    {
+        return $this->router->url($name, $params);
+    }
+
+    /**
+     * Return 404 not found response
+     */
+    protected function notFound(): void
+    {
+        http_response_code(404);
+        $this->render('error', [
+            'title' => '404 - Not Found',
+            'message' => 'The resource you are looking for was not found.',
+            'code' => 404
+        ]);
     }
 }

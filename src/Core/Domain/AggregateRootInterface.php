@@ -27,8 +27,8 @@ namespace App\Core\Domain;
  * - Invoice (manages InvoiceLine value objects)
  * - BankAccount (manages BankTransaction entities)
  */
-interface AggregateRoot extends Entity
+interface AggregateRootInterface extends EntityInterface
 {
-    // Inherits id(): mixed from Entity
+    // Inherits id(): mixed from EntityInterface
     // No additional methods required - this is a marker interface
 }

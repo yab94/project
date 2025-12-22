@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Infrastructure\Web\Routing;
+namespace App\Core\Infrastructure\Web;
 
-use App\Core\Domain\Module;
-use App\Core\Infrastructure\Web\Routing\Attribute\Route;
+use App\Core\Domain\AbstractModule;
+use App\Core\Infrastructure\Web\Attribute\Route;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -79,7 +79,7 @@ final class Router
         $this->namedRoutes[$name] = ['method' => $method, 'path' => $path, 'handler' => $handler];
     }
 
-    public function registerModule(Module $module): self
+    public function registerModule(AbstractModule $module): self
     {
         foreach ($module->getControllers() as $controllerClass) {
             $this->registerController($controllerClass);

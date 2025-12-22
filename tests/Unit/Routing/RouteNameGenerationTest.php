@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Routing;
 
-use App\Core\Infrastructure\Web\Routing\Router;
-use App\Core\Infrastructure\Web\Routing\Attribute\Get;
-use App\Core\Infrastructure\Web\Routing\Attribute\Post;
+use App\Core\Infrastructure\Web\Router;
+use App\Core\Infrastructure\Web\Attribute\Get;
+use App\Core\Infrastructure\Web\Attribute\Post;
 use App\Core\Infrastructure\Web\Controller\AbstractController;
 use PHPUnit\Framework\TestCase;
 

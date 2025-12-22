@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Billing\Domain\ValueObject;
 
-use App\Core\Domain\ValueObject;
+use App\Core\Domain\ValueObjectInterface;
 
-final readonly class Amount implements ValueObject
+final readonly class Amount implements ValueObjectInterface
 {
     private float $value;
     private string $currency;
@@ -51,7 +51,7 @@ final readonly class Amount implements ValueObject
         return new self($this->value * $multiplier, $this->currency);
     }
 
-    public function equals(ValueObject $other): bool
+    public function equals(ValueObjectInterface $other): bool
     {
         return $other instanceof self 
             && $this->value === $other->value 

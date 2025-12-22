@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Billing;
 
-use App\Core\Domain\Module as BaseModule;
+use App\Core\Domain\AbstractModule as BaseModule;
 use App\Billing\Infrastructure\Web\Controller\QuoteController;
 use App\Billing\Infrastructure\Web\Controller\InvoiceController;
 

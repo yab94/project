@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Banking\Domain\AggregateRoot;
 
-use App\Core\Domain\AggregateRoot;
+use App\Core\Domain\AggregateRootInterface;
 use App\Banking\Domain\ValueObject\BankAccountId;
 use App\Banking\Domain\ValueObject\IBAN;
 use App\Billing\Domain\ValueObject\Amount;
@@ -24,7 +24,7 @@ use App\Billing\Domain\ValueObject\Amount;
  * but they reference BankAccount. In a stricter aggregate design,
  * transactions could be child entities of BankAccount.
  */
-final class BankAccount implements AggregateRoot
+final class BankAccount implements AggregateRootInterface
 {
     private BankAccountId $id;
     private string $name;

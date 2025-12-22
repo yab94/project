@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\CRM\Domain\AggregateRoot;
 
-use App\Core\Domain\AggregateRoot;
+use App\Core\Domain\AggregateRootInterface;
 use App\CRM\Domain\ValueObject\PersonId;
 use App\CRM\Domain\ValueObject\PersonType;
 use App\CRM\Domain\ValueObject\Address;
@@ -20,7 +20,7 @@ use App\CRM\Domain\ValueObject\Contact;
  * All modifications to addresses and contacts must go through Person
  * to maintain aggregate consistency.
  */
-final class Person implements AggregateRoot
+final class Person implements AggregateRootInterface
 {
     private PersonId $id;
     private PersonType $type;

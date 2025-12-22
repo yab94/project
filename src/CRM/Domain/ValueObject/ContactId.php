@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\CRM\Domain\ValueObject;
 
-use App\Core\Domain\ValueObject;
+use App\Core\Domain\ValueObjectInterface;
 
-final class ContactId implements ValueObject
+final class ContactId implements ValueObjectInterface
 {
     private string $value;
 
@@ -28,7 +28,7 @@ final class ContactId implements ValueObject
         return $this->value;
     }
 
-    public function equals(ValueObject $other): bool
+    public function equals(ValueObjectInterface $other): bool
     {
         return $other instanceof self && $this->value === $other->value;
     }

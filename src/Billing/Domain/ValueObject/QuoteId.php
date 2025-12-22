@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Billing\Domain\ValueObject;
 
-use App\Core\Domain\ValueObject;
+use App\Core\Domain\ValueObjectInterface;
 
-final readonly class QuoteId implements ValueObject
+final readonly class QuoteId implements ValueObjectInterface
 {
     private string $value;
 
@@ -28,7 +28,7 @@ final readonly class QuoteId implements ValueObject
         return $this->value;
     }
 
-    public function equals(ValueObject $other): bool
+    public function equals(ValueObjectInterface $other): bool
     {
         return $other instanceof self && $this->value === $other->value;
     }

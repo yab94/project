@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Billing\Domain\ValueObject;
 
 use App\Billing\Domain\ValueObject\Amount;
-use App\Core\Domain\ValueObject;
+use App\Core\Domain\ValueObjectInterface;
 
-final readonly class QuoteLine implements ValueObject
+final readonly class QuoteLine implements ValueObjectInterface
 {
     private string $description;
     private int $quantity;
@@ -57,7 +57,7 @@ final readonly class QuoteLine implements ValueObject
         return $this->unitPrice->multiply($this->quantity);
     }
 
-    public function equals(ValueObject $other): bool
+    public function equals(ValueObjectInterface $other): bool
     {
         return $other instanceof self
             && $this->description === $other->description

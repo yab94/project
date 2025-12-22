@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\CRM\Infrastructure\Console\Command;
 
 use App\Core\Infrastructure\Console\Command\AbstractCommand;
-use App\Core\Infrastructure\Console\CLI\Attribute\Command;
+use App\Core\Infrastructure\Console\Attribute\Command;
 
 #[Command(
     name: 'crm:test',

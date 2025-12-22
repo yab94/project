@@ -35,13 +35,13 @@ namespace App\Core\Domain;
  * - Return new instances for modifications (immutability)
  * - Override __toString() for debugging
  */
-interface ValueObject
+interface ValueObjectInterface
 {
     /**
      * Compare this value object with another for equality
      * 
-     * @param ValueObject $other The value object to compare with
+     * @param ValueObjectInterface $other The value object to compare with
      * @return bool True if both value objects have equal values
      */
-    public function equals(ValueObject $other): bool;
+    public function equals(ValueObjectInterface $other): bool;
 }

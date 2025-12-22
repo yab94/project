@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Infrastructure\Web\Routing\Attribute;
+namespace App\Core\Infrastructure\Web\Attribute;
 
 use Attribute;
 

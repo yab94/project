@@ -12,8 +12,8 @@ use App\Billing\Domain\Service\QuoteNumberGenerator;
 use App\CRM\Infrastructure\Persistence\PDOPersonRepository;
 use App\Billing\Infrastructure\Persistence\PDOQuoteRepository;
 use App\Core\Infrastructure\Web\Controller\AbstractController;
-use App\Core\Infrastructure\Web\Routing\Attribute\{Get, Post};
-use App\Core\Infrastructure\Web\Routing\Router;
+use App\Core\Infrastructure\Web\Attribute\{Get, Post};
+use App\Core\Infrastructure\Web\Router;
 
 class QuoteController extends AbstractController
 {

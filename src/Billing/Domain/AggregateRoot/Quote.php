@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Billing\Domain\AggregateRoot;
 
-use App\Core\Domain\AggregateRoot;
+use App\Core\Domain\AggregateRootInterface;
 use App\Billing\Domain\ValueObject\Amount;
 use App\Billing\Domain\ValueObject\QuoteId;
 use App\Billing\Domain\ValueObject\QuoteStatus;
@@ -25,7 +25,7 @@ use App\CRM\Domain\ValueObject\PersonId;
  * All modifications to quote lines must go through Quote to maintain
  * aggregate consistency and enforce workflow rules.
  */
-final class Quote implements AggregateRoot
+final class Quote implements AggregateRootInterface
 {
     private QuoteId $id;
     private PersonId $clientId;

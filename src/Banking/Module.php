@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Banking;
 
-use App\Core\Domain\Module as BaseModule;
+use App\Banking\Infrastructure\Web\Controller\BankAccountController;
+use App\Core\Domain\AbstractModule as BaseModule;
 
 class Module extends BaseModule
 {
@@ -16,7 +17,7 @@ class Module extends BaseModule
     public function getControllers(): array
     {
         return [
-            // TODO: Add Banking controllers when implemented
+            BankAccountController::class,
         ];
     }
 

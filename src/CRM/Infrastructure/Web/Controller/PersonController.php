@@ -8,10 +8,10 @@ use App\CRM\Application\Command\CreatePersonCommand;
 use App\CRM\Application\PersonService;
 use App\CRM\Infrastructure\Persistence\PDOPersonRepository;
 use App\Core\Infrastructure\Web\Controller\AbstractController;
-use App\Core\Infrastructure\Web\Routing\Attribute\Get;
-use App\Core\Infrastructure\Web\Routing\Attribute\Post;
-use App\Core\Infrastructure\Web\Routing\Attribute\Delete;
-use App\Core\Infrastructure\Web\Routing\Router;
+use App\Core\Infrastructure\Web\Attribute\Get;
+use App\Core\Infrastructure\Web\Attribute\Post;
+use App\Core\Infrastructure\Web\Attribute\Delete;
+use App\Core\Infrastructure\Web\Router;
 
 class PersonController extends AbstractController
 {

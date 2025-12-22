@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Domain;
 
-abstract class Module
+abstract class AbstractModule
 {
     /**
      * Get the list of controller classes to register for this module
