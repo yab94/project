@@ -18,9 +18,7 @@ class Module extends BaseModule
 
     public function getControllers(): array
     {
-        return [
-            \App\Core\Infrastructure\Web\Controller\HomeController::class,
-        ];
+        return [];
     }
 
     public function getCommands(): array

@@ -10,6 +10,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 // Bootstrap CLI application through modules
 $cli = new CLI($argv);
 $cli->registerModule(new \App\Core\Module());
+$cli->registerModule(new \App\Layout\Module());
 $cli->registerModule(new \App\CRM\Module());
 $cli->registerModule(new \App\Billing\Module());
 $cli->registerModule(new \App\Banking\Module());

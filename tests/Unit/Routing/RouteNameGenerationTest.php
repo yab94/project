@@ -45,7 +45,7 @@ class RouteNameGenerationTest extends TestCase
     public function testHomeControllerSpecialCase(): void
     {
         // Register HomeController
-        $this->router->registerController(\App\Core\Infrastructure\Web\Controller\HomeController::class);
+        $this->router->registerController(\App\Layout\Infrastructure\Web\Controller\HomeController::class);
 
         // Should generate 'home' instead of 'home.index'
         $this->assertNotNull($this->router->url('home'));

@@ -33,8 +33,8 @@ abstract class AbstractController
             };
             $viewPath = $rootDir . "src/{$module}/Infrastructure/Web/View/{$resource}/{$action}.php";
         } else {
-            // Fallback for non-module views (like home, errors, etc.)
-            $viewPath = __DIR__ . '/../View/' . $view . '.php';
+            // Fallback for non-module views (like home, errors, etc.) - now in Layout module
+            $viewPath = $rootDir . 'src/Layout/Infrastructure/Web/View/' . $view . '.php';
         }
         
         if (!file_exists($viewPath)) {
@@ -43,9 +43,9 @@ abstract class AbstractController
             return;
         }
         
-        require_once __DIR__ . '/../View/layout/header.php';
+        require_once $rootDir . 'src/Layout/Infrastructure/Web/View/layout/header.php';
         require_once $viewPath;
-        require_once __DIR__ . '/../View/layout/footer.php';
+        require_once $rootDir . 'src/Layout/Infrastructure/Web/View/layout/footer.php';
     }
 
     protected function redirect(string $url): void

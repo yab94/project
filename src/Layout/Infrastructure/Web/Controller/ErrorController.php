@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Infrastructure\Web\Controller;
+namespace App\Layout\Infrastructure\Web\Controller;
+
+use App\Core\Infrastructure\Web\Controller\AbstractController;
 
 final class ErrorController extends AbstractController
 {

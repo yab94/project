@@ -9,6 +9,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 // Bootstrap application through Shared Module
 $router = new Router($_SERVER, $_GET, $_POST, $_FILES, $_COOKIE);
 $router->registerModule(new \App\Core\Module());
+$router->registerModule(new \App\Layout\Module());
 $router->registerModule(new \App\CRM\Module());
 $router->registerModule(new \App\Billing\Module());
 $router->registerModule(new \App\Banking\Module());
