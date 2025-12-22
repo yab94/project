@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Banking;
 
+use App\Banking\Application\BankAccountService;
 use App\Banking\Infrastructure\Web\Controller\BankAccountController;
 use App\Core\Domain\AbstractModule as BaseModule;
 
@@ -25,6 +26,18 @@ class Module extends BaseModule
     {
         return [
             // TODO: Add Banking commands when implemented
+        ];
+    }
+
+    /**
+     * Public API of the Banking module
+     * Only these services can be used by other modules
+     */
+    public function getServices(): array
+    {
+        return [
+            BankAccountService::class,
+            // Add other services that should be accessible
         ];
     }
 }

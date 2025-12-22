@@ -1,15 +1,15 @@
 <div class="container">
-    <h2>Add Transaction - <?= htmlspecialchars($account->accountName()) ?></h2>
+    <h2>Add Transaction - <?= htmlspecialchars($account->name()) ?></h2>
 
     <div class="account-summary">
-        <p><strong>Current Balance:</strong> <?= number_format($account->balance(), 2) ?> €</p>
+        <p><strong>Current Balance:</strong> <?= number_format($account->balance()->value(), 2) ?> €</p>
     </div>
 
     <?php if (isset($error)): ?>
         <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
 
-    <form method="POST" action="<?= $url('bank_accounts.store_transaction', ['id' => (string) $account->id()]) ?>">
+    <form method="POST" action="<?= $url->route('bank_accounts.store_transaction', ['id' => $account->id()->value()]) ?>">
         <div class="form-group">
             <label for="type">Transaction Type:</label>
             <select id="type" name="type" required>
@@ -45,7 +45,7 @@
 
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Add Transaction</button>
-            <a href="<?= $url('bank_accounts.show', ['id' => (string) $account->id()]) ?>" class="btn btn-secondary">Cancel</a>
+            <a href="<?= $url->route('bank_accounts.show', ['id' => $account->id()->value()]) ?>" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
 </div>

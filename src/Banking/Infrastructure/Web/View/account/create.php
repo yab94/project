@@ -5,7 +5,7 @@
         <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
 
-    <form method="POST" action="<?= $url('bank_accounts.store') ?>">
+    <form method="POST" action="<?= $url->route('bank_accounts.store') ?>">
         <div class="form-group">
             <label for="account_name">Account Name:</label>
             <input 
@@ -31,6 +31,19 @@
         </div>
 
         <div class="form-group">
+            <label for="bic">BIC/SWIFT (Optional):</label>
+            <input 
+                type="text" 
+                id="bic" 
+                name="bic" 
+                value="<?= htmlspecialchars($old['bic'] ?? '') ?>"
+                placeholder="BNPAFRPPXXX"
+                maxlength="11"
+            >
+            <small>Format: 8 or 11 characters</small>
+        </div>
+
+        <div class="form-group">
             <label for="initial_balance">Initial Balance (€):</label>
             <input 
                 type="number" 
@@ -44,7 +57,7 @@
 
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Create Account</button>
-            <a href="<?= $url('bank_accounts.index') ?>" class="btn btn-secondary">Cancel</a>
+            <a href="<?= $url->route('bank_accounts.index') ?>" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
 </div>

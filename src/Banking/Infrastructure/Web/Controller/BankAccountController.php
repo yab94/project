@@ -62,16 +62,29 @@ class BankAccountController extends AbstractController
     {
         $accountName = $this->post('account_name');
         $iban = $this->post('iban');
+        $bic = $this->post('bic');
         $initialBalance = (float) ($this->post('initial_balance') ?? 0);
 
         try {
-            $account = $this->accountService->createAccount(
+            // Create the account
+            $account = $this->accountService->createBankAccount(
                 $accountName,
-                new IBAN($iban),
-                $initialBalance
+                $iban,
+                $bic ?: null
             );
 
-            $this->redirect($this->url('bank_accounts.show', ['id' => (string) $account->id()]));
+            // If there's an initial balance, add it as a deposit transaction
+            if ($initialBalance > 0) {
+                $this->accountService->addTransaction(
+                    $account->id()->value(),
+                    new \DateTimeImmutable(),
+                    'credit',
+                    $initialBalance,
+                    'Initial balance'
+                );
+            }
+
+            $this->redirect($this->url('bank_accounts.show', ['id' => $account->id()->value()]));
         } catch (\Exception $e) {
             $this->render('banking/account/create', [
                 'title' => 'Create Bank Account',
@@ -84,17 +97,17 @@ class BankAccountController extends AbstractController
     #[Get('/bank-accounts/{id}', 'bank_accounts.show')]
     public function show(string $id): void
     {
-        $account = $this->accountRepository->findById(BankAccountId::fromString($id));
+        $account = $this->accountRepository->findById(new BankAccountId($id));
 
         if (!$account) {
             $this->notFound();
             return;
         }
 
-        $transactions = $this->transactionRepository->findByAccountId($account->id());
+        $transactions = $this->transactionRepository->findByBankAccountId($account->id());
 
         $this->render('banking/account/show', [
-            'title' => 'Bank Account - ' . $account->accountName(),
+            'title' => 'Bank Account - ' . $account->name(),
             'account' => $account,
             'transactions' => $transactions
         ]);
@@ -103,7 +116,7 @@ class BankAccountController extends AbstractController
     #[Get('/bank-accounts/{id}/transaction', 'bank_accounts.add_transaction')]
     public function addTransaction(string $id): void
     {
-        $account = $this->accountRepository->findById(BankAccountId::fromString($id));
+        $account = $this->accountRepository->findById(new BankAccountId($id));
 
         if (!$account) {
             $this->notFound();
@@ -119,7 +132,7 @@ class BankAccountController extends AbstractController
     #[Post('/bank-accounts/{id}/transaction', 'bank_accounts.store_transaction')]
     public function storeTransaction(string $id): void
     {
-        $account = $this->accountRepository->findById(BankAccountId::fromString($id));
+        $account = $this->accountRepository->findById(new BankAccountId($id));
 
         if (!$account) {
             $this->notFound();
@@ -131,11 +144,16 @@ class BankAccountController extends AbstractController
         $description = $this->post('description');
 
         try {
-            if ($type === 'deposit') {
-                $this->accountService->deposit($account->id(), $amount, $description);
-            } else {
-                $this->accountService->withdraw($account->id(), $amount, $description);
-            }
+            // Map form type to transaction type
+            $transactionType = $type === 'deposit' ? 'credit' : 'debit';
+            
+            $this->accountService->addTransaction(
+                $id,
+                new \DateTimeImmutable(),
+                $transactionType,
+                $amount,
+                $description
+            );
 
             $this->redirect($this->url('bank_accounts.show', ['id' => $id]));
         } catch (\Exception $e) {
@@ -152,7 +170,8 @@ class BankAccountController extends AbstractController
     public function destroy(string $id): void
     {
         try {
-            $this->accountService->closeAccount(BankAccountId::fromString($id));
+            // Delete the account using the repository
+            $this->accountRepository->delete(new BankAccountId($id));
             $this->redirect($this->url('bank_accounts.index'));
         } catch (\Exception $e) {
             $this->redirect($this->url('bank_accounts.show', ['id' => $id]));

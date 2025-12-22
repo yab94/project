@@ -1,11 +1,11 @@
 <div class="container">
     <div class="header-actions">
         <h2>Bank Accounts</h2>
-        <a href="<?= $url('bank_accounts.create') ?>" class="btn btn-primary">Create New Account</a>
+        <a href="<?= $url->route('bank_accounts.create') ?>" class="btn btn-primary">Create New Account</a>
     </div>
 
     <?php if (empty($accounts)): ?>
-        <p>No bank accounts found. <a href="<?= $url('bank_accounts.create') ?>">Create one now</a>.</p>
+        <p>No bank accounts found. <a href="<?= $url->route('bank_accounts.create') ?>">Create one now</a>.</p>
     <?php else: ?>
         <table>
             <thead>
@@ -20,16 +20,16 @@
             <tbody>
                 <?php foreach ($accounts as $account): ?>
                     <tr>
-                        <td><?= htmlspecialchars($account->accountName()) ?></td>
-                        <td><?= htmlspecialchars((string) $account->iban()) ?></td>
-                        <td><?= number_format($account->balance(), 2) ?> €</td>
+                        <td><?= htmlspecialchars($account->name()) ?></td>
+                        <td><?= htmlspecialchars($account->iban()->formatted()) ?></td>
+                        <td><?= number_format($account->balance()->value(), 2) ?> €</td>
                         <td>
-                            <span class="badge <?= $account->isActive() ? 'badge-success' : 'badge-danger' ?>">
-                                <?= $account->isActive() ? 'Active' : 'Closed' ?>
+                            <span class="badge badge-success">
+                                Active
                             </span>
                         </td>
                         <td>
-                            <a href="<?= $url('bank_accounts.show', ['id' => (string) $account->id()]) ?>">View</a>
+                            <a href="<?= $url->route('bank_accounts.show', ['id' => $account->id()->value()]) ?>">View</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

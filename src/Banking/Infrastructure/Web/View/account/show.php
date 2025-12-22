@@ -1,11 +1,11 @@
 <div class="container">
     <div class="header-actions">
-        <h2><?= htmlspecialchars($account->accountName()) ?></h2>
+        <h2><?= htmlspecialchars($account->name()) ?></h2>
         <div>
-            <a href="<?= $url('bank_accounts.add_transaction', ['id' => (string) $account->id()]) ?>" class="btn btn-primary">
+            <a href="<?= $url->route('bank_accounts.add_transaction', ['id' => $account->id()->value()]) ?>" class="btn btn-primary">
                 Add Transaction
             </a>
-            <a href="<?= $url('bank_accounts.index') ?>" class="btn btn-secondary">Back to List</a>
+            <a href="<?= $url->route('bank_accounts.index') ?>" class="btn btn-secondary">Back to List</a>
         </div>
     </div>
 
@@ -13,19 +13,19 @@
         <div class="info-grid">
             <div>
                 <strong>IBAN:</strong>
-                <p><?= htmlspecialchars((string) $account->iban()) ?></p>
+                <p><?= htmlspecialchars($account->iban()->formatted()) ?></p>
             </div>
             <div>
                 <strong>Balance:</strong>
-                <p class="balance <?= $account->balance() < 0 ? 'negative' : 'positive' ?>">
-                    <?= number_format($account->balance(), 2) ?> €
+                <p class="balance <?= $account->balance()->value() < 0 ? 'negative' : 'positive' ?>">
+                    <?= number_format($account->balance()->value(), 2) ?> €
                 </p>
             </div>
             <div>
                 <strong>Status:</strong>
                 <p>
-                    <span class="badge <?= $account->isActive() ? 'badge-success' : 'badge-danger' ?>">
-                        <?= $account->isActive() ? 'Active' : 'Closed' ?>
+                    <span class="badge badge-success">
+                        Active
                     </span>
                 </p>
             </div>
@@ -68,14 +68,12 @@
         </table>
     <?php endif; ?>
 
-    <?php if ($account->isActive()): ?>
-        <form method="POST" action="<?= $url('bank_accounts.destroy', ['id' => (string) $account->id()]) ?>" 
-              onsubmit="return confirm('Are you sure you want to close this account?');" 
-              style="margin-top: 2rem;">
-            <input type="hidden" name="_method" value="DELETE">
-            <button type="submit" class="btn btn-danger">Close Account</button>
-        </form>
-    <?php endif; ?>
+    <form method="POST" action="<?= $url->route('bank_accounts.destroy', ['id' => $account->id()->value()]) ?>" 
+          onsubmit="return confirm('Are you sure you want to delete this account?');" 
+          style="margin-top: 2rem;">
+        <input type="hidden" name="_method" value="DELETE">
+        <button type="submit" class="btn btn-danger">Delete Account</button>
+    </form>
 </div>
 
 <style>
