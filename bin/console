@@ -1,0 +1,18 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use App\Core\Infrastructure\Console\CLI\CLI;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+// Bootstrap CLI application through modules
+$cli = new CLI($argv);
+$cli->registerModule(new \App\Core\Module());
+$cli->registerModule(new \App\CRM\Module());
+$cli->registerModule(new \App\Billing\Module());
+$cli->registerModule(new \App\Banking\Module());
+
+// Dispatch command
+exit($cli->dispatch());

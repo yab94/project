@@ -1,0 +1,116 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\CRM\Infrastructure\Web\Controller;
+
+use App\CRM\Application\Command\CreatePersonCommand;
+use App\CRM\Application\PersonService;
+use App\CRM\Infrastructure\Persistence\PDOPersonRepository;
+use App\Core\Infrastructure\Web\Controller\AbstractController;
+use App\Core\Infrastructure\Web\Routing\Attribute\Get;
+use App\Core\Infrastructure\Web\Routing\Attribute\Post;
+use App\Core\Infrastructure\Web\Routing\Attribute\Delete;
+use App\Core\Infrastructure\Web\Routing\Router;
+
+class PersonController extends AbstractController
+{
+    private PersonService $personService;
+
+    public function __construct(Router $router)
+    {
+        parent::__construct($router);
+        $repository = new PDOPersonRepository();
+        $this->personService = new PersonService($repository);
+    }
+
+    #[Get('/persons', 'persons.index')]
+    public function index(): void
+    {
+        $persons = $this->personService->findAll();
+        
+        $this->render('crm/person/index', [
+            'title' => 'Persons',
+            'persons' => $persons
+        ]);
+    }
+
+    #[Get('/persons/create', 'persons.create')]
+    public function create(): void
+    {
+        $this->render('crm/person/create', [
+            'title' => 'Create Person'
+        ]);
+    }
+
+    #[Post('/persons', 'persons.store')]
+    public function store(): void
+    {
+        try {
+            $type = $this->post('type', 'individual');
+            $name = $this->post('name', '');
+            $siret = $this->post('siret');
+
+            $command = new CreatePersonCommand($type, $name, $siret);
+            $person = $this->personService->createPerson($command);
+
+            $url = $this->urlGenerator()->route('persons.index', [], ['success' => 'created']);
+            $this->redirect($url);
+        } catch (\Exception $e) {
+            $url = $this->urlGenerator()->route('persons.create', [], ['error' => $e->getMessage()]);
+            $this->redirect($url);
+        }
+    }
+
+    #[Get('/persons/{id}', 'persons.view')]
+    public function view(?string $id = null): void
+    {
+        // Support both /persons/{id} and /persons/view?id=xxx
+        $id = $id ?? $_GET['id'] ?? null;
+        
+        if (!$id) {
+            $url = $this->urlGenerator()->route('persons.index', [], ['error' => 'missing_id']);
+            $this->redirect($url);
+            return;
+        }
+
+        $person = $this->personService->findById($id);
+        
+        if (!$person) {
+            $url = $this->urlGenerator()->route('persons.index', [], ['error' => 'not_found']);
+            $this->redirect($url);
+            return;
+        }
+
+        $this->render('crm/person/view', [
+            'title' => 'Person Details',
+            'person' => $person
+        ]);
+    }
+
+    #[Delete('/persons/{id}', 'persons.delete')]
+    public function delete(?string $id = null): void
+    {
+        try {
+            if (!$id) {
+                $url = $this->urlGenerator()->route('persons.index', [], ['error' => 'missing_id']);
+                $this->redirect($url);
+                return;
+            }
+
+            $this->personService->deletePerson($id);
+            $url = $this->urlGenerator()->route('persons.index', [], ['success' => 'deleted']);
+            $this->redirect($url);
+        } catch (\Exception $e) {
+            $url = $this->urlGenerator()->route('persons.index', [], ['error' => $e->getMessage()]);
+            $this->redirect($url);
+        }
+    }
+
+    public function update(?string $id = null): void
+    {
+        // Future implementation for updating persons
+        $url = $this->urlGenerator()->route('persons.index', [], ['info' => 'update_not_implemented']);
+        $this->redirect($url);
+    }
+}

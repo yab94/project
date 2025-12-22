@@ -1,0 +1,243 @@
+Projet PHP CRM/Devis/Facture - Architecture et conventions
+
+Ce projet implémente un système de gestion CRM/Devis/Facture avec une architecture DDD modulaire.
+
+## Stack technique
+
+- PHP 8.4.16 (strict types, attributes)
+- Architecture DDD avec vertical slices (modules indépendants)
+- Composer pour la gestion des dépendances
+- PHPUnit 10.5.60 pour les tests (50 tests, 91 assertions)
+- PSR-4 pour l'autoloading
+- Git pour le contrôle de version
+- Docker Compose (php:8.4-apache, mysql, phpmyadmin)
+- Makefile pour automatiser les tâches (test, start, stop)
+- SSR : génération de pages HTML simples
+- Tout le code métier est en anglais (Person, Quote, Invoice, etc.)
+
+## Structure des modules (vertical slices)
+
+Chaque module suit la structure Domain/Application/Infrastructure :
+
+### Module CRM
+- **Domain** : Person (AggregateRoot), Address, Contact, PersonType (ValueObject)
+- **Application** : PersonService, CreatePersonCommand
+- **Infrastructure** : PersonController, PDOPersonRepository
+- **Routes nommées** : persons.index, persons.create, persons.store, persons.view, persons.delete
+
+### Module Billing
+- **Domain** : Quote (AggregateRoot), Invoice (AggregateRoot), QuoteLine, InvoiceLine, QuoteStatus, InvoiceStatus (ValueObjects)
+- **Application** : QuoteService, InvoiceService, CreateQuoteCommand, CreateInvoiceCommand
+- **Infrastructure** : QuoteController, InvoiceController, PDOQuoteRepository, PDOInvoiceRepository
+- **Routes nommées** :
+  - Quotes : quotes.index, quotes.create, quotes.store, quotes.view, quotes.addLine, quotes.send, quotes.accept, quotes.reject
+  - Invoices : invoices.index, invoices.create, invoices.store, invoices.view, invoices.issue, invoices.pay, invoices.cancel
+- **Dépendances** : Billing → CRM (pour charger les Person/clients)
+
+### Module Banking
+- **Domain** : BankAccount, Transaction (structure prévue, non implémenté)
+- **Routes** : /bank-accounts (placeholder, module non implémenté)
+
+### Module Shared
+- **Domain** : Module (abstract), Entity, AggregateRoot, ValueObject, Repository (marker interface)
+- **Infrastructure** : 
+  - Router (routage par attributs PHP 8), UrlGenerator (service OOP pour génération d'URLs)
+  - AbstractController (base des controllers avec render() et urlGenerator())
+  - HomeController, ErrorController, ExampleController
+  - Database (PDO singleton)
+- **Orchestration** : SharedModule bootstrap tous les modules applicatifs dans sa méthode boot()
+
+## Système de routage
+
+- **Routage par attributs PHP 8** : #[Get('/path', 'name')], #[Post], #[Put], #[Delete]
+- **Noms de routes** : tous les contrôleurs ont des routes nommées
+- **Auto-génération** : si le nom n'est pas fourni, généré automatiquement selon le pattern `{controller}.{method}`
+  - PersonController::index() → persons.index
+  - QuoteController::store() → quotes.store
+  - HomeController::index() → home (cas spécial)
+- **Pluralisation auto** : person → persons, quote → quotes, invoice → invoices
+- **Enregistrement** : Router::registerController() scanne les attributs des méthodes publiques
+
+## UrlGenerator (remplacement de helpers.php)
+
+- **Service OOP** : App\Modules\Shared\Infrastructure\Web\Routing\UrlGenerator
+- **API** :
+  - route(string $name, array $params = [], array $query = []): string
+  - absolute(string $name, array $params = [], array $query = []): string
+- **Usage controllers** : $this->urlGenerator()->route('persons.index')
+- **Usage views** : $url->route('quotes.view', ['id' => $quote->id()->value()])
+- **Injection automatique** : variable $url disponible dans toutes les vues via AbstractController::render()
+
+## Migration effectuée (100% des URLs)
+
+### Contrôleurs migrés
+- ✅ PersonController : 5 routes nommées, 8 redirects convertis
+- ✅ QuoteController : 8 routes nommées, 10+ redirects convertis
+- ✅ InvoiceController : 7 routes nommées, 10 redirects convertis
+- ✅ HomeController : 1 route nommée (home)
+
+### Vues migrées
+- ✅ Person views (index, create, view) : tous les href et actions convertis
+- ✅ Quote views (index, create, view) : tous les href et actions convertis
+- ✅ Invoice views (index, create, view) : tous les href et actions convertis
+- ✅ Shared views (home, header, error) : tous les liens convertis
+- ⚠️ Bank accounts : liens en placeholder (module non implémenté)
+
+### Résultat
+- 0 URL hardcodée restante (hors /bank-accounts)
+- 21 routes nommées au total
+- 28+ redirects convertis à urlGenerator()
+- 30+ liens href convertis dans les vues
+
+## Bootstrap de l'application
+
+Fichier : public/index.php
+
+```php
+$router = new Router();
+$sharedModule = new SharedModule($router);
+$sharedModule->boot();
+Router::setInstance($router);
+$router->dispatch();
+```
+
+Le SharedModule orchestre :
+1. Enregistrement de ses propres contrôleurs (HomeController, etc.)
+2. Instanciation des modules applicatifs (CRMModule, BillingModule, BankingModule)
+3. Appel de boot() sur chaque module
+4. Enregistrement des contrôleurs de chaque module via Router::registerController()
+
+Note : le fichier routes.php a été supprimé, le bootstrap est maintenant direct dans index.php.
+
+## Architecture des modules
+
+Chaque module implémente App\Modules\Shared\Domain\Module :
+
+```php
+abstract class Module
+{
+    abstract public function getName(): string;
+    abstract public function getControllers(): array;
+    public function boot(): void {}
+}
+```
+
+### Exemple : CRM/Module.php
+```php
+public function getControllers(): array
+{
+    return [PersonController::class];
+}
+```
+
+### Shared/Module.php (spécial)
+Reçoit le Router en constructor et orchestre tous les modules dans boot().
+
+## Entités principales
+
+### CRM
+- **Person** (AggregateRoot) : type (individual/company), firstName, lastName, companyName, siret
+- **Address** (Entity) : street, city, postalCode, country
+- **Contact** (Entity) : type, email, phone
+- Relations : Person 1-N Address, Person 1-N Contact
+
+### Billing
+- **Quote** (AggregateRoot) : number, clientId, createdAt, validUntil, status (draft/sent/accepted/rejected/expired)
+- **QuoteLine** (Entity) : description, quantity, unitPrice
+- **Invoice** (AggregateRoot) : number, clientId, quoteId?, issuedAt, dueDate, status (draft/issued/paid/cancelled)
+- **InvoiceLine** (Entity) : description, quantity, unitPrice
+- Relations : Quote 1-N QuoteLine, Invoice 1-N InvoiceLine, Invoice N-1 Quote (optionnel), Quote/Invoice N-1 Person
+
+### Banking (prévu, non implémenté)
+- **BankAccount** : name, balance
+- **Transaction** : bankAccountId, amount, date, description
+- Relations : Transaction N-1 BankAccount, Transaction N-1? Invoice (rapprochement optionnel)
+
+## Workflows métier
+
+### Workflow Quote
+1. Draft : création avec client et validité
+2. Ajout de lignes (QuoteLine)
+3. Send : envoi au client (status → sent)
+4. Accept/Reject : client accepte ou refuse
+5. Si accepted : possibilité de créer une facture
+
+### Workflow Invoice
+1. Draft : création à partir d'un quote accepté (copie des lignes)
+2. Issue : émission de la facture (status → issued)
+3. Pay : marquée comme payée (status → paid, enregistre paidAmount)
+4. Cancel : annulation possible si draft ou issued
+
+## Tests
+
+- Commande : `sudo make test`
+- Statut actuel : 50 tests, 91 assertions - OK
+- Couverture :
+  - Tests unitaires Domain (entities, value objects, aggregates)
+  - Tests d'application (services, commands)
+  - Tests d'intégration (controllers, repositories, database)
+  - Tests de routing (génération de noms auto, UrlGenerator, routes nommées)
+
+## Conventions de code
+
+- **Strict types** : declare(strict_types=1) dans tous les fichiers
+- **Namespaces** : App\Modules\{Module}\{Layer}\...
+- **Route naming** : {resource}.{action} (pluriel pour les ressources)
+- **URL generation** : TOUJOURS via UrlGenerator, jamais de chaînes hardcodées
+- **Redirects** : $url = $this->urlGenerator()->route(...); $this->redirect($url);
+- **Views** : utiliser $url->route() pour tous les liens
+- **PHP 8.4** : nullable explicite requis, pas de warnings
+
+## Documentation
+
+- docs/URL_GENERATION.md : guide d'utilisation du UrlGenerator
+- docs/MODULE_ARCHITECTURE.md : architecture des modules et comment en ajouter
+- docs/URL_GENERATOR_MIGRATION.md : guide de migration (complété)
+- docs/AUTO_GENERATED_ROUTE_NAMES.md : système de génération automatique des noms
+- docs/SHARED_MODULE_BOOTSTRAP.md : bootstrap et orchestration
+- docs/URL_MIGRATION_COMPLETE.md : rapport de migration complète
+
+## Dépendances inter-modules
+
+- Billing → CRM : QuoteController et InvoiceController chargent les Person via PersonService
+- Shared → Tous : SharedModule instancie et orchestre CRM, Billing, Banking
+- Règle : éviter les dépendances circulaires, respecter les bounded contexts DDD
+
+## Commandes utiles
+
+```bash
+# Lancer les tests
+sudo make test
+
+# Démarrer l'environnement
+sudo make start
+
+# Arrêter l'environnement
+sudo make stop
+
+# Vérifier les URLs hardcodées restantes
+grep -r "href=['\"]/" src/Modules --include="*.php" | grep -v "route(" | grep -v "/bank-accounts"
+
+# Vérifier les redirects hardcodés
+grep -r "redirect('/" src/Modules --include="*.php" | grep -v "urlGenerator"
+```
+
+## État actuel du projet
+
+✅ Architecture DDD modulaire implémentée
+✅ CRM complet (Person, Address, Contact)
+✅ Billing complet (Quote, Invoice avec workflows)
+✅ Routage par attributs fonctionnel
+✅ UrlGenerator intégré partout
+✅ Migration 100% complète (0 URL hardcodée)
+✅ Tests complets et au vert (50/50)
+✅ Documentation extensive
+⏳ Banking prévu mais non implémenté
+
+## Prochaines étapes suggérées
+
+1. Implémenter le module Banking avec les mêmes patterns
+2. Ajouter des tests end-to-end pour les workflows complets
+3. Ajouter une règle CI pour détecter les URLs hardcodées
+4. Générer automatiquement une liste de toutes les routes (routes.json)
+5. Ajouter une interface d'administration pour gérer les modules

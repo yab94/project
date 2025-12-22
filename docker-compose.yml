@@ -1,0 +1,57 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: crm_php
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - crm_network
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=crm_db
+      - DB_USER=crm_user
+      - DB_PASSWORD=crm_password
+
+  mysql:
+    image: mysql:8.0
+    container_name: crm_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: crm_db
+      MYSQL_USER: crm_user
+      MYSQL_PASSWORD: crm_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+    networks:
+      - crm_network
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: crm_phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
+    networks:
+      - crm_network
+
+networks:
+  crm_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
