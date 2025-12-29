@@ -13,7 +13,7 @@ final class Database
         if (self::$instance === null) {
             $host = getenv('DB_HOST') ?: 'db';
             $port = getenv('DB_PORT') ?: '3306';
-            $database = getenv('DB_NAME') ?: 'crm_db';
+            $database = getenv('DB_NAME') ?: 'app_db';
             $username = getenv('DB_USER') ?: 'user';
             $password = getenv('DB_PASSWORD') ?: 'password';
 

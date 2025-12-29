@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Infrastructure\Console;
 
-use App\Core\Domain\AbstractModule;
+use App\Core\Domain\ModuleInterface;
 use App\Core\Infrastructure\Console\Attribute\Command;
 use App\Core\Infrastructure\Console\Command\AbstractCommand;
 use ReflectionClass;
@@ -34,13 +34,11 @@ final class CLI
     /**
      * Register a module and its commands
      */
-    public function registerModule(AbstractModule $module): self
+    public function registerModule(ModuleInterface $module): self
     {
         foreach ($module->getCommands() as $commandClass) {
             $this->registerCommand($commandClass);
         }
-
-        $module->boot();
 
         return $this;
     }

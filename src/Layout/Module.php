@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Layout;
 
-use App\Core\Domain\AbstractModule as BaseModule;
+use App\Core\Domain\ModuleInterface;
 use App\Layout\Infrastructure\Web\Controller\ErrorController;
 use App\Layout\Infrastructure\Web\Controller\ExampleController;
 use App\Layout\Infrastructure\Web\Controller\HomeController;
 
-final class Module extends BaseModule
+final class Module implements ModuleInterface
 {
     public function getName(): string
     {

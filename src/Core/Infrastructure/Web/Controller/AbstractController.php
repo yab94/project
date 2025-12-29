@@ -19,21 +19,22 @@ abstract class AbstractController
         $url = $this->urlGenerator();
         
         // Determine view path based on module
-        // View format: 'crm/person/index' -> src/CRM/Infrastructure/Web/View/person/index.php
+        // View format: 'module/resource/action' -> src/{Module}/Infrastructure/Web/View/{resource}/{action}.php
         // __DIR__ = src/Core/Infrastructure/Web/Controller
         $rootDir = __DIR__ . '/../../../../../';  // Go up to project root (5 levels)
         
-        if (preg_match('#^(crm|billing|banking)/([a-z_]+)/([a-z_]+)$#i', $view, $matches)) {
+        // Generic module/resource/action pattern
+        if (preg_match('#^([a-z]+)/([a-z_]+)/([a-z_]+)$#i', $view, $matches)) {
             [, $modulePrefix, $resource, $action] = $matches;
-            // CRM, Billing, or Banking (proper casing for directory names)
-            $module = match(strtolower($modulePrefix)) {
-                'crm' => 'CRM',
-                'billing' => 'Billing',
-                'banking' => 'Banking',
-            };
+            // Convert module prefix to PascalCase: crm -> CRM, billing -> Billing, myModule -> MyModule
+            $module = ucfirst(strtolower($modulePrefix));
+            // Special handling for acronyms (all uppercase if 3 chars or less)
+            if (strlen($modulePrefix) <= 3) {
+                $module = strtoupper($modulePrefix);
+            }
             $viewPath = $rootDir . "src/{$module}/Infrastructure/Web/View/{$resource}/{$action}.php";
         } else {
-            // Fallback for non-module views (like home, errors, etc.) - now in Layout module
+            // Fallback for non-module views (like home, errors, etc.) - in Layout module
             $viewPath = $rootDir . 'src/Layout/Infrastructure/Web/View/' . $view . '.php';
         }
         

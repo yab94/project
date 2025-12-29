@@ -1,0 +1,104 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+jobs:
+  deploy:
+    name: Deploy Application
+    runs-on: ubuntu-latest
+    environment: 
+      name: ${{ github.event.inputs.environment || 'production' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo, pdo_mysql, intl
+
+      - name: Install dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: Create deployment package
+        run: |
+          mkdir -p deploy
+          rsync -av --exclude='.git' \
+                    --exclude='.github' \
+                    --exclude='tests' \
+                    --exclude='docker' \
+                    --exclude='node_modules' \
+                    --exclude='.env.local' \
+                    --exclude='coverage' \
+                    --exclude='.phpunit.result.cache' \
+                    . deploy/
+
+      - name: Create .env file for production
+        run: |
+          cat > deploy/.env << EOF
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_NAME=${{ secrets.DB_NAME }}
+          DB_USER=${{ secrets.DB_USER }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          APP_ENV=production
+          APP_DEBUG=false
+          EOF
+
+      - name: Deploy via SSH (rsync)
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          SOURCE: "deploy/"
+          TARGET: ${{ secrets.REMOTE_PATH }}
+          EXCLUDE: ".git,.github"
+
+      - name: Execute remote commands
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ${{ secrets.REMOTE_PATH }}
+            
+            # Set correct permissions
+            chmod -R 755 .
+            chmod -R 775 public
+            
+            # Clear caches if needed
+            # php bin/console cache:clear --env=prod
+            
+            # Run migrations if you have them
+            # php bin/migrate.php
+            
+            echo "✅ Deployment completed successfully!"
+
+      - name: Notification on success
+        if: success()
+        run: |
+          echo "🎉 Deployment to ${{ github.event.inputs.environment || 'production' }} successful!"
+          echo "Version: ${{ github.sha }}"
+
+      - name: Notification on failure
+        if: failure()
+        run: |
+          echo "❌ Deployment failed!"

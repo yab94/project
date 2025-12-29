@@ -46,15 +46,15 @@ shell: ## Ouvrir un shell dans le conteneur PHP
 	docker compose exec php bash
 
 db-shell: ## Ouvrir un shell MySQL
-	docker compose exec mysql mysql -u crm_user -pcrm_password crm_db
+	docker compose exec mysql mysql -u app_user -papp_password app_db
 
 db-reset: ## Réinitialiser la base de données
-	docker compose exec mysql mysql -u root -proot_password -e "DROP DATABASE IF EXISTS crm_db; CREATE DATABASE crm_db;"
-	docker compose exec -T mysql mysql -u root -proot_password crm_db < docker/init.sql
+	docker compose exec mysql mysql -u root -proot_password -e "DROP DATABASE IF EXISTS app_db; CREATE DATABASE app_db;"
+	docker compose exec -T mysql mysql -u root -proot_password app_db < docker/init.sql
 	@echo "✓ Base de données réinitialisée avec succès!"
 
 db-init: ## Initialiser la base de données
-	docker compose exec -T mysql mysql -u root -proot_password crm_db < docker/init.sql
+	docker compose exec -T mysql mysql -u root -proot_password app_db < docker/init.sql
 	@echo "✓ Base de données initialisée avec succès!"
 
 composer-dump: ## Regénérer l'autoload Composer

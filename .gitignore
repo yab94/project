@@ -4,3 +4,12 @@ composer.lock
 .idea/
 .vscode/
 *.log
+
+# Secrets et configuration sensible
+.env
+.env.local
+.env.*.local
+.github-secrets-summary.txt
+ssh_keys/
+*.pem
+*.key

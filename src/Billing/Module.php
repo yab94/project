@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Billing;
 
-use App\Core\Domain\AbstractModule as BaseModule;
+use App\Core\Domain\ModuleInterface;
 use App\Billing\Infrastructure\Web\Controller\QuoteController;
 use App\Billing\Infrastructure\Web\Controller\InvoiceController;
 
-class Module extends BaseModule
+final class Module implements ModuleInterface
 {
     public function getName(): string
     {

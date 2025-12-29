@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Core\Infrastructure\Web;
 
-use App\Core\Domain\AbstractModule;
+use App\Core\Domain\ModuleInterface;
 use App\Core\Infrastructure\Web\Attribute\Route;
+use App\Core\Infrastructure\Web\UrlGenerator;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -79,13 +80,11 @@ final class Router
         $this->namedRoutes[$name] = ['method' => $method, 'path' => $path, 'handler' => $handler];
     }
 
-    public function registerModule(AbstractModule $module): self
+    public function registerModule(ModuleInterface $module): self
     {
         foreach ($module->getControllers() as $controllerClass) {
             $this->registerController($controllerClass);
         }
-
-        $module->boot();
 
         return $this;
     }

@@ -61,14 +61,4 @@ class ModuleTest extends TestCase
         $this->assertNotEmpty($controllers);
         $this->assertContains(\App\Banking\Infrastructure\Web\Controller\BankAccountController::class, $controllers);
     }
-
-    public function testModuleBootCanBeCalled(): void
-    {
-        $module = new CRMModule();
-        
-        // Should not throw exception
-        $module->boot();
-        
-        $this->assertTrue(true);
-    }
 }

@@ -1,0 +1,47 @@
+# Git
+.git
+.gitignore
+.github
+
+# Docker
+docker-compose.yml
+docker/
+Dockerfile
+
+# Tests
+tests/
+phpunit.xml
+.phpunit.result.cache
+coverage/
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Development files
+.env.local
+.env.test
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node
+node_modules/
+npm-debug.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Context snapshots
+context
