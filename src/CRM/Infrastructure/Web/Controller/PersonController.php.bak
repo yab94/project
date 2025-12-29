@@ -12,7 +12,6 @@ use App\Core\Infrastructure\Web\Attribute\Get;
 use App\Core\Infrastructure\Web\Attribute\Post;
 use App\Core\Infrastructure\Web\Attribute\Delete;
 use App\Core\Infrastructure\Web\Router;
-use App\Core\Infrastructure\Web\View\View;
 
 class PersonController extends AbstractController
 {
@@ -30,26 +29,18 @@ class PersonController extends AbstractController
     {
         $persons = $this->personService->findAll();
         
-        $content = new View('crm/person/index', [
-            'url' => $this->urlGenerator(),
+        $this->render(new View('crm/person/index', [
             'title' => 'Persons',
             'persons' => $persons
         ]);
-        $this->render(new View('layout/default', [
-            'content' => $content->render()
-        ]));
     }
 
     #[Get('/persons/create', 'persons.create')]
     public function create(): void
     {
-        $content = new View('crm/person/create', [
-            'url' => $this->urlGenerator(),
+        $this->render(new View('crm/person/create', [
             'title' => 'Create Person'
         ]);
-        $this->render(new View('layout/default', [
-            'content' => $content->render()
-        ]));
     }
 
     #[Post('/persons', 'persons.store')]
@@ -91,14 +82,10 @@ class PersonController extends AbstractController
             return;
         }
 
-        $content = new View('crm/person/view', [
-            'url' => $this->urlGenerator(),
+        $this->render(new View('crm/person/view', [
             'title' => 'Person Details',
             'person' => $person
         ]);
-        $this->render(new View('layout/default', [
-            'content' => $content->render()
-        ]));
     }
 
     #[Delete('/persons/{id}', 'persons.delete')]

@@ -12,8 +12,10 @@ use App\Billing\Domain\Service\QuoteNumberGenerator;
 use App\CRM\Infrastructure\Persistence\PDOPersonRepository;
 use App\Billing\Infrastructure\Persistence\PDOQuoteRepository;
 use App\Core\Infrastructure\Web\Controller\AbstractController;
-use App\Core\Infrastructure\Web\Attribute\{Get, Post};
+use App\Core\Infrastructure\Web\Attribute\Get;
+use App\Core\Infrastructure\Web\Attribute\Post;
 use App\Core\Infrastructure\Web\Router;
+use App\Core\Infrastructure\Web\View\View;
 
 class QuoteController extends AbstractController
 {
@@ -37,10 +39,14 @@ class QuoteController extends AbstractController
     {
         $quotes = $this->quoteService->findAll();
         
-        $this->render('billing/quote/index', [
+        $content = new View('billing/quote/index', [
+            'url' => $this->urlGenerator(),
             'title' => 'Quotes',
             'quotes' => $quotes
         ]);
+        $this->render(new View('layout/default', [
+            'content' => $content->render()
+        ]));
     }
 
     #[Get('/quotes/create', 'quotes.create')]
@@ -48,10 +54,14 @@ class QuoteController extends AbstractController
     {
         $persons = $this->personService->findAll();
         
-        $this->render('billing/quote/create', [
+        $content = new View('billing/quote/create', [
+            'url' => $this->urlGenerator(),
             'title' => 'Create Quote',
             'persons' => $persons
         ]);
+        $this->render(new View('layout/default', [
+            'content' => $content->render()
+        ]));
     }
 
     #[Post('/quotes', 'quotes.store')]
@@ -102,11 +112,15 @@ class QuoteController extends AbstractController
         // Load client info
         $client = $this->personService->findById($quote->clientId()->value());
 
-        $this->render('billing/quote/view', [
+        $content = new View('billing/quote/view', [
+            'url' => $this->urlGenerator(),
             'title' => 'Quote Details',
             'quote' => $quote,
             'client' => $client
         ]);
+        $this->render(new View('layout/default', [
+            'content' => $content->render()
+        ]));
     }
 
     #[Post('/quotes/{id}/lines', 'quotes.addLine')]

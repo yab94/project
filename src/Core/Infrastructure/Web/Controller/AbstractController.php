@@ -13,34 +13,32 @@ abstract class AbstractController
     public function __construct(protected Router $router) {}
 
     /**
-     * Render a view with optional layout composition
+     * Render a view and output it
      * 
-     * @param string $view View path (e.g., 'crm/person/index')
-     * @param array $data Data to pass to the view
-     * @param string|null $layout Layout name (e.g., 'default', 'minimal') or null for no layout
+     * The controller is responsible for composing views.
+     * Compose views explicitly in your action:
+     * 
+     * Example with layout:
+     *   $content = new View('crm/person/index', ['persons' => $persons]);
+     *   $this->render(new View('layout/default', ['content' => $content->render()]));
+     * 
+     * Example with complex composition:
+     *   $this->render(new View('layout/dashboard', [
+     *       'sidebar' => new View('layout/sidebar', ['user' => $user])->render(),
+     *       'main' => new View('dashboard', ['stats' => $stats])->render(),
+     *   ]));
+     * 
+     * Example without layout:
+     *   $this->render(new View('api/response', ['data' => $data]));
+     * 
+     * @param View $view The view to render
      */
-    protected function render(string $view, array $data = [], ?string $layout = 'default'): void
+    protected function render(View $view): void
     {
         // Make URL generator available globally for views and layouts
-        $urlGenerator = $this->urlGenerator();
-        $GLOBALS['url'] = $urlGenerator;
+        $GLOBALS['url'] = $this->urlGenerator();
         
-        // Also add it to the data so it's available as $url in views
-        $data['url'] = $urlGenerator;
-        
-        // Create the content view
-        $contentView = new View($view, $data);
-        
-        if ($layout === null) {
-            // No layout - just output the view
-            echo $contentView->render();
-        } else {
-            // Compose view with layout
-            $layoutView = new View("layout/{$layout}", [
-                'content' => $contentView->render()
-            ]);
-            echo $layoutView->render();
-        }
+        echo $view->render();
     }
 
     protected function redirect(string $url): void
@@ -104,10 +102,14 @@ abstract class AbstractController
     protected function notFound(): void
     {
         http_response_code(404);
-        $this->render('error', [
+        $content = new View('error', [
+            'url' => $this->urlGenerator(),
             'title' => '404 - Not Found',
             'message' => 'The resource you are looking for was not found.',
             'code' => 404
         ]);
+        $this->render(new View('layout/default', [
+            'content' => $content->render()
+        ]));
     }
 }

@@ -14,8 +14,10 @@ use App\Billing\Infrastructure\Persistence\PDOInvoiceRepository;
 use App\CRM\Infrastructure\Persistence\PDOPersonRepository;
 use App\Billing\Infrastructure\Persistence\PDOQuoteRepository;
 use App\Core\Infrastructure\Web\Controller\AbstractController;
-use App\Core\Infrastructure\Web\Attribute\{Get, Post};
+use App\Core\Infrastructure\Web\Attribute\Get;
+use App\Core\Infrastructure\Web\Attribute\Post;
 use App\Core\Infrastructure\Web\Router;
+use App\Core\Infrastructure\Web\View\View;
 
 class InvoiceController extends AbstractController
 {
@@ -43,10 +45,14 @@ class InvoiceController extends AbstractController
     {
         $invoices = $this->invoiceService->findAll();
         
-        $this->render('billing/invoice/index', [
+        $content = new View('billing/invoice/index', [
+            'url' => $this->urlGenerator(),
             'title' => 'Invoices',
             'invoices' => $invoices
         ]);
+        $this->render(new View('layout/default', [
+            'content' => $content->render()
+        ]));
     }
 
     #[Get('/invoices/create', 'invoices.create')]
@@ -59,10 +65,14 @@ class InvoiceController extends AbstractController
             return $quote->status()->value === 'accepted';
         });
         
-        $this->render('billing/invoice/create', [
+        $content = new View('billing/invoice/create', [
+            'url' => $this->urlGenerator(),
             'title' => 'Create Invoice',
             'quotes' => $acceptedQuotes
         ]);
+        $this->render(new View('layout/default', [
+            'content' => $content->render()
+        ]));
     }
 
     #[Post('/invoices', 'invoices.store')]
@@ -113,11 +123,15 @@ class InvoiceController extends AbstractController
         // Load client info
         $client = $this->personService->findById($invoice->clientId()->value());
 
-        $this->render('billing/invoice/view', [
+        $content = new View('billing/invoice/view', [
+            'url' => $this->urlGenerator(),
             'title' => 'Invoice Details',
             'invoice' => $invoice,
             'client' => $client
         ]);
+        $this->render(new View('layout/default', [
+            'content' => $content->render()
+        ]));
     }
 
     #[Post('/invoices/{id}/issue', 'invoices.issue')]

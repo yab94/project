@@ -18,6 +18,7 @@ use App\Core\Infrastructure\Web\Attribute\Get;
 use App\Core\Infrastructure\Web\Attribute\Post;
 use App\Core\Infrastructure\Web\Controller\AbstractController;
 use App\Core\Infrastructure\Web\Router;
+use App\Core\Infrastructure\Web\View\View;
 
 class BankAccountController extends AbstractController
 {
@@ -43,18 +44,26 @@ class BankAccountController extends AbstractController
     {
         $accounts = $this->accountRepository->findAll();
 
-        $this->render('banking/account/index', [
+        $content = new View('banking/account/index', [
+            'url' => $this->urlGenerator(),
             'title' => 'Bank Accounts',
             'accounts' => $accounts
         ]);
+        $this->render(new View('layout/default', [
+            'content' => $content->render()
+        ]));
     }
 
     #[Get('/bank-accounts/create', 'bank_accounts.create')]
     public function create(): void
     {
-        $this->render('banking/account/create', [
+        $content = new View('banking/account/create', [
+            'url' => $this->urlGenerator(),
             'title' => 'Create Bank Account'
         ]);
+        $this->render(new View('layout/default', [
+            'content' => $content->render()
+        ]));
     }
 
     #[Post('/bank-accounts', 'bank_accounts.store')]
@@ -86,11 +95,15 @@ class BankAccountController extends AbstractController
 
             $this->redirect($this->url('bank_accounts.show', ['id' => $account->id()->value()]));
         } catch (\Exception $e) {
-            $this->render('banking/account/create', [
+            $content = new View('banking/account/create', [
+                'url' => $this->urlGenerator(),
                 'title' => 'Create Bank Account',
                 'error' => $e->getMessage(),
                 'old' => $this->post()
             ]);
+            $this->render(new View('layout/default', [
+                'content' => $content->render()
+            ]));
         }
     }
 
@@ -106,11 +119,15 @@ class BankAccountController extends AbstractController
 
         $transactions = $this->transactionRepository->findByBankAccountId($account->id());
 
-        $this->render('banking/account/show', [
+        $content = new View('banking/account/show', [
+            'url' => $this->urlGenerator(),
             'title' => 'Bank Account - ' . $account->name(),
             'account' => $account,
             'transactions' => $transactions
         ]);
+        $this->render(new View('layout/default', [
+            'content' => $content->render()
+        ]));
     }
 
     #[Get('/bank-accounts/{id}/transaction', 'bank_accounts.add_transaction')]
@@ -123,10 +140,14 @@ class BankAccountController extends AbstractController
             return;
         }
 
-        $this->render('banking/account/add_transaction', [
+        $content = new View('banking/account/add_transaction', [
+            'url' => $this->urlGenerator(),
             'title' => 'Add Transaction',
             'account' => $account
         ]);
+        $this->render(new View('layout/default', [
+            'content' => $content->render()
+        ]));
     }
 
     #[Post('/bank-accounts/{id}/transaction', 'bank_accounts.store_transaction')]
@@ -157,12 +178,16 @@ class BankAccountController extends AbstractController
 
             $this->redirect($this->url('bank_accounts.show', ['id' => $id]));
         } catch (\Exception $e) {
-            $this->render('banking/account/add_transaction', [
+            $content = new View('banking/account/add_transaction', [
+                'url' => $this->urlGenerator(),
                 'title' => 'Add Transaction',
                 'account' => $account,
                 'error' => $e->getMessage(),
                 'old' => $this->post()
             ]);
+            $this->render(new View('layout/default', [
+                'content' => $content->render()
+            ]));
         }
     }
 
