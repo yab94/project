@@ -6,47 +6,41 @@ namespace App\Core\Infrastructure\Web\Controller;
 
 use App\Core\Infrastructure\Web\Router;
 use App\Core\Infrastructure\Web\UrlGenerator;
+use App\Core\Infrastructure\Web\View\View;
 
 abstract class AbstractController
 {
     public function __construct(protected Router $router) {}
 
-    protected function render(string $view, array $data = []): void
+    /**
+     * Render a view with optional layout composition
+     * 
+     * @param string $view View path (e.g., 'crm/person/index')
+     * @param array $data Data to pass to the view
+     * @param string|null $layout Layout name (e.g., 'default', 'minimal') or null for no layout
+     */
+    protected function render(string $view, array $data = [], ?string $layout = 'default'): void
     {
-        extract($data);
+        // Make URL generator available globally for views and layouts
+        $urlGenerator = $this->urlGenerator();
+        $GLOBALS['url'] = $urlGenerator;
         
-        // Make URL generator available in views
-        $url = $this->urlGenerator();
+        // Also add it to the data so it's available as $url in views
+        $data['url'] = $urlGenerator;
         
-        // Determine view path based on module
-        // View format: 'module/resource/action' -> src/{Module}/Infrastructure/Web/View/{resource}/{action}.php
-        // __DIR__ = src/Core/Infrastructure/Web/Controller
-        $rootDir = __DIR__ . '/../../../../../';  // Go up to project root (5 levels)
+        // Create the content view
+        $contentView = new View($view, $data);
         
-        // Generic module/resource/action pattern
-        if (preg_match('#^([a-z]+)/([a-z_]+)/([a-z_]+)$#i', $view, $matches)) {
-            [, $modulePrefix, $resource, $action] = $matches;
-            // Convert module prefix to PascalCase: crm -> CRM, billing -> Billing, myModule -> MyModule
-            $module = ucfirst(strtolower($modulePrefix));
-            // Special handling for acronyms (all uppercase if 3 chars or less)
-            if (strlen($modulePrefix) <= 3) {
-                $module = strtoupper($modulePrefix);
-            }
-            $viewPath = $rootDir . "src/{$module}/Infrastructure/Web/View/{$resource}/{$action}.php";
+        if ($layout === null) {
+            // No layout - just output the view
+            echo $contentView->render();
         } else {
-            // Fallback for non-module views (like home, errors, etc.) - in Layout module
-            $viewPath = $rootDir . 'src/Layout/Infrastructure/Web/View/' . $view . '.php';
+            // Compose view with layout
+            $layoutView = new View("layout/{$layout}", [
+                'content' => $contentView->render()
+            ]);
+            echo $layoutView->render();
         }
-        
-        if (!file_exists($viewPath)) {
-            http_response_code(404);
-            echo "View not found: {$view} (looked in {$viewPath})";
-            return;
-        }
-        
-        require_once $rootDir . 'src/Layout/Infrastructure/Web/View/layout/header.php';
-        require_once $viewPath;
-        require_once $rootDir . 'src/Layout/Infrastructure/Web/View/layout/footer.php';
     }
 
     protected function redirect(string $url): void

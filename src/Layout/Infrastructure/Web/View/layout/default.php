@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($title ?? 'CRM') ?></title>
+    <title>CRM</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.6; color: #333; background: #f5f5f5; }
@@ -66,12 +66,21 @@
         <div class="container">
             <h1>🏢 CRM / Quotes / Invoices System</h1>
             <nav>
-                <a href="<?= $url->route('home') ?>">Home</a>
-                <a href="<?= $url->route('persons.index') ?>">Persons</a>
-                <a href="<?= $url->route('quotes.index') ?>">Quotes</a>
-                <a href="<?= $url->route('invoices.index') ?>">Invoices</a>
-                <a href="<?= $url->route('bank_accounts.index') ?>">Bank Accounts</a>
+                <a href="<?= $GLOBALS['url']->route('home') ?>">Home</a>
+                <a href="<?= $GLOBALS['url']->route('persons.index') ?>">Persons</a>
+                <a href="<?= $GLOBALS['url']->route('quotes.index') ?>">Quotes</a>
+                <a href="<?= $GLOBALS['url']->route('invoices.index') ?>">Invoices</a>
+                <a href="<?= $GLOBALS['url']->route('bank_accounts.index') ?>">Bank Accounts</a>
             </nav>
         </div>
     </header>
     <main class="container">
+        <?= $content ?>
+    </main>
+    <footer style="text-align: center; padding: 2rem 0; color: #7f8c8d; margin-top: 2rem;">
+        <div class="container">
+            <p>&copy; 2025 CRM System - DDD Architecture with PHP 8.2</p>
+        </div>
+    </footer>
+</body>
+</html>

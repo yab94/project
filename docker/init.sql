@@ -1,6 +1,5 @@
 -- Initialize database schema
-CREATE DATABASE IF NOT EXISTS crm_db;
-USE crm_db;
+USE app_db;
 
 -- Table Persons
 CREATE TABLE IF NOT EXISTS persons (
@@ -10,7 +9,8 @@ CREATE TABLE IF NOT EXISTS persons (
     first_name VARCHAR(255),
     company_name VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_persons_type (type)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Table Addresses
@@ -121,7 +121,6 @@ CREATE TABLE IF NOT EXISTS bank_transactions (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Indexes for performance
-CREATE INDEX idx_persons_type ON persons(type);
 CREATE INDEX idx_addresses_person ON addresses(person_id);
 CREATE INDEX idx_contacts_person ON contacts(person_id);
 CREATE INDEX idx_quotes_client ON quotes(client_id);
